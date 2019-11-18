@@ -38,9 +38,11 @@ class MortgageController extends Controller
      */
     public function store(Request $request)
     {
-        $this->loanAmount = $request->principal;
-        $this->totalPayments = $request->term;
-        $this->interest = $request->apr/100;
+        Mortgage::create($request->all());
+
+        $this->loanAmount = (float) $request->principal;
+        $this->totalPayments = (int) $request->term;
+        $this->interest = (float) $request->apr/100;
 
         $annualPayment = round($this->__calcPayment());
 
@@ -50,10 +52,9 @@ class MortgageController extends Controller
 
     private function __calcPayment()
     {
-
-        $interest  = (float) $this->interest;
-        $totalPayments = (int) $this->totalPayments;
-        $loanAmount = (float) $this->loanAmount;
+        $loanAmount = $this->loanAmount;
+        $totalPayments =  $this->totalPayments;
+        $interest  = $this->interest;
         //***********************************************************
         //              INTEREST * ((1 + INTEREST) ^ TOTALPAYMENTS)
         // PMT = LOAN * -------------------------------------------
