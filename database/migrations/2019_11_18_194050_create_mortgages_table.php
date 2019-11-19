@@ -16,6 +16,7 @@ class CreateMortgagesTable extends Migration
         Schema::create('mortgages', function (Blueprint $table) {
             $table->bigIncrements('id');
 //            $table->uuid('uuid');
+            $table->string('session_id')->nullable();
             $table->float('principal', 18, 2);
             $table->integer('term')->unsigned();
             $table->float('apr', 8, 2);
