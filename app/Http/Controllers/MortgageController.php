@@ -4,13 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Mortgage;
 use Illuminate\Http\Request;
+use Validator;
+
 
 class MortgageController extends Controller
 {
 
-    private  $loanAmount;
-    private $totalPayments;
+    private $loanAmount;
     private $interest;
+    private $totalPayments;
+
     /**
      * Display a listing of the resource.
      *
@@ -38,16 +41,33 @@ class MortgageController extends Controller
      */
     public function store(Request $request)
     {
+        //return $request->session()->all();
+
+        $validation = Validator::make($request->all(), [
+            'session_id' => 'required',
+            'principal' => 'required|numeric',
+            'apr' => 'required|numeric',
+            'term' => 'required|integer',
+        ]);
+
+        if ($validation->fails())
+        {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validation->errors()
+            ], 422);
+        }
+
         Mortgage::create($request->all());
 
         $this->loanAmount = (float) $request->principal;
-        $this->totalPayments = (int) $request->term;
         $this->interest = (float) $request->apr/100;
+        $this->totalPayments = (int) $request->term;
 
         $annualPayment = round($this->__calcPayment());
 
         return response()->json(['totalCost' => $annualPayment*$request->term,
-                                 'monthlyPayment' => round($annualPayment/12)  ]);
+            'monthlyPayment' => round($annualPayment/12)  ]);
     }
 
     private function __calcPayment()
