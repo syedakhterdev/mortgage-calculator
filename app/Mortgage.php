@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class Mortgage extends Model
 {
 //    use Uuids;
-    protected $fillable = ['principal' , 'term', 'apr'];
+    protected $fillable = ['session_id','principal' , 'term', 'apr'];
 }
